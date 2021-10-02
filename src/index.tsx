@@ -3,32 +3,13 @@ import * as esbuild from 'esbuild-wasm';
 import { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import CodeEditor from './components/code-editor';
+import Preview from './components/preview';
 import { fetchPlugin } from './plugins/fetch-plugin';
 import { unpkgPathPlugin } from './plugins/unpkg-path-plugin';
 
 const App = () => {
-  const iframeRef = useRef<any>();
   const [input, setInput] = useState<string | undefined>('');
-
-  const html = `
-    <html>
-      <head></head>
-      <body>
-        <div id="root"></div>
-        <script>
-          window.addEventListener('message', (event) => {
-            try {
-              eval(event.data);
-            } catch(error) {
-              const root = document.querySelector("#root");
-              root.innerHTML = '<div style="color:red;"><h4>Runtime error:</h4>' + error + '</div>';
-              console.error(error);
-            }    
-          }, false);
-        </script>
-      </body>
-    </html>
-`;
+  const [code, setCode] = useState('');
 
   // const wasmURL = 'https://unpkg.com/esbuild-wasm@0.12.28/esbuild.wasm';
   const initEsbuild = async () => {
@@ -36,8 +17,6 @@ const App = () => {
   };
 
   const onClick = async () => {
-    iframeRef.current.srcdoc = html;
-
     const result = await esbuild.build({
       entryPoints: ['index.js'],
       bundle: true,
@@ -45,11 +24,7 @@ const App = () => {
       plugins: [unpkgPathPlugin(), fetchPlugin(input)],
       define: { 'process.env.NODE_ENV': '"production"' },
     });
-
-    iframeRef.current.contentWindow?.postMessage(
-      result.outputFiles[0].text,
-      '*'
-    );
+    setCode(result.outputFiles[0].text);
   };
 
   useEffect(() => {
@@ -62,19 +37,10 @@ const App = () => {
         initialValue="const a = 2;"
         onChange={(value) => setInput(value)}
       />
-      <textarea
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      ></textarea>
       <div>
         <button onClick={onClick}>Submit</button>
       </div>
-      <iframe
-        ref={iframeRef}
-        sandbox="allow-scripts"
-        srcDoc={html}
-        title="CodePreviewIframe"
-      ></iframe>
+      <Preview code={code} />
     </div>
   );
 };
