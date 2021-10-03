@@ -1,40 +1,23 @@
 import 'bulmaswatch/superhero/bulmaswatch.min.css';
-import * as esbuild from 'esbuild-wasm';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import ReactDOM from 'react-dom';
+import bundle from './bundler';
 import CodeEditor from './components/code-editor';
 import Preview from './components/preview';
-import { fetchPlugin } from './plugins/fetch-plugin';
-import { unpkgPathPlugin } from './plugins/unpkg-path-plugin';
 
 const App = () => {
   const [input, setInput] = useState<string | undefined>('');
   const [code, setCode] = useState('');
 
-  // const wasmURL = 'https://unpkg.com/esbuild-wasm@0.12.28/esbuild.wasm';
-  const initEsbuild = async () => {
-    await esbuild.initialize({ worker: true, wasmURL: './esbuild.wasm' });
-  };
-
   const onClick = async () => {
-    const result = await esbuild.build({
-      entryPoints: ['index.js'],
-      bundle: true,
-      write: false,
-      plugins: [unpkgPathPlugin(), fetchPlugin(input)],
-      define: { 'process.env.NODE_ENV': '"production"' },
-    });
-    setCode(result.outputFiles[0].text);
+    const output = await bundle(input || 'console.log(123);');
+    setCode(output);
   };
-
-  useEffect(() => {
-    initEsbuild();
-  }, []);
 
   return (
     <div>
       <CodeEditor
-        initialValue="const a = 2;"
+        initialValue="console.log(123);"
         onChange={(value) => setInput(value)}
       />
       <div>

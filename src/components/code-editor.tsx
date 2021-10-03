@@ -1,6 +1,6 @@
 import './code-editor.css';
 import { useRef } from 'react';
-import MonacoEditor, { Monaco, OnChange, OnMount } from '@monaco-editor/react';
+import MonacoEditor, { OnChange, OnMount } from '@monaco-editor/react';
 import prettier from 'prettier';
 import parser from 'prettier/parser-babel';
 
