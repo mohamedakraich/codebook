@@ -1,4 +1,4 @@
-import './code-editor.css';
+import './CodeEditor.css';
 import { useRef } from 'react';
 import MonacoEditor, { OnChange, OnMount } from '@monaco-editor/react';
 import prettier from 'prettier';

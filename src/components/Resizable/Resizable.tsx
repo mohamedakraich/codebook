@@ -1,4 +1,4 @@
-import './resizable.css';
+import './Resizable.css';
 import { ResizableBox, ResizableBoxProps } from 'react-resizable';
 import { useEffect, useState } from 'react';
 
@@ -30,7 +30,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
     return () => {
       window.removeEventListener('resize', listener);
     };
-  }, []);
+  }, [width]);
 
   if (direction === 'horizontal') {
     resizableProps = {

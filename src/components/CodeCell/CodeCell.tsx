@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import bundle from '../bundler';
-import CodeEditor from './code-editor';
-import Preview from './preview';
-import Resizable from './resizable';
+import bundle from '../../bundler';
+import CodeEditor from '../CodeEditor/CodeEditor';
+import Preview from '../Preview/Preview';
+import Resizable from '../Resizable/Resizable';
 
 const CodeCell = () => {
   const [input, setInput] = useState<string | undefined>('');
